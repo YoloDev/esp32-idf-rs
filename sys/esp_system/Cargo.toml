@@ -1,5 +1,5 @@
 [package]
-name = "esp_system-sys"
+name = "esp-idf-system-sys"
 version = "0.1.0"
 authors = ["Aleksander Heintz <alxandr@alxandr.me>"]
 edition = "2018"
