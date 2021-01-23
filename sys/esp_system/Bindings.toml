@@ -1,0 +1,21 @@
+component = "esp_system"
+headers = ["esp_system.h"]
+functions = [
+  "esp_register_shutdown_handler",
+  "esp_unregister_shutdown_handler",
+  "esp_restart",
+  "esp_reset_reason",
+  "esp_get_free_heap_size",
+  "esp_get_free_internal_heap_size",
+  "esp_get_minimum_free_heap_size",
+  "esp_random",
+  "esp_fill_random",
+  "esp_base_mac_addr_set",
+  "esp_base_mac_addr_get",
+  "esp_efuse_mac_get_custom",
+  "esp_efuse_mac_get_default",
+  "esp_read_mac",
+  "esp_derive_local_mac",
+  "esp_system_abort",
+  "esp_chip_info",
+]

@@ -1,2 +1,7 @@
 [workspace]
-members = ["sys/*"]
+members = [
+  # -sys packages
+  "sys/*",
+  # Build tasks
+  "xtask",
+]

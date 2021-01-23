@@ -13,14 +13,6 @@ pub const CHIP_FEATURE_BLE: usize = bit(4);
 /// Chip has Bluetooth Classic
 pub const CHIP_FEATURE_BT: usize = bit(5);
 
-mod esp_system;
+mod bindings;
 
-pub use esp_system::*;
-
-#[cfg(test)]
-mod tests {
-  #[test]
-  fn it_works() {
-    assert_eq!(1 << 5, super::bit(5));
-  }
-}
+pub use bindings::*;
