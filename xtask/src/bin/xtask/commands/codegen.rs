@@ -22,7 +22,7 @@ impl XTask for Codegen {
     for path in glob("sys/*/Bindings.toml")? {
       let path = path?;
       info!("Generating bindings from {}", path.display());
-      codegen::gen_bindings(&path, &includes)?;
+      codegen::gen_bindings(&path, idf_path, &includes)?;
     }
 
     Ok(())

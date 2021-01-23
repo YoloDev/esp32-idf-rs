@@ -1,3 +1,5 @@
+#![no_std]
+
 use core::{ffi::c_void, hint::unreachable_unchecked};
 
 use bitflags::bitflags;

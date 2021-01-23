@@ -2,15 +2,15 @@
 
 #![allow(non_camel_case_types, non_upper_case_globals)]
 
-pub type __uint8_t = ::std::os::raw::c_uchar;
-pub type __int32_t = ::std::os::raw::c_int;
-pub type __uint32_t = ::std::os::raw::c_uint;
+pub type __uint8_t = ::cty::c_uchar;
+pub type __int32_t = ::cty::c_int;
+pub type __uint32_t = ::cty::c_uint;
 pub type esp_err_t = i32;
 pub const esp_mac_type_t_ESP_MAC_WIFI_STA: esp_mac_type_t = 0;
 pub const esp_mac_type_t_ESP_MAC_WIFI_SOFTAP: esp_mac_type_t = 1;
 pub const esp_mac_type_t_ESP_MAC_BT: esp_mac_type_t = 2;
 pub const esp_mac_type_t_ESP_MAC_ETH: esp_mac_type_t = 3;
-pub type esp_mac_type_t = ::std::os::raw::c_uint;
+pub type esp_mac_type_t = ::cty::c_uint;
 #[doc = "!< Reset reason can not be determined"]
 pub const esp_reset_reason_t_ESP_RST_UNKNOWN: esp_reset_reason_t = 0;
 #[doc = "!< Reset due to power-on event"]
@@ -34,7 +34,7 @@ pub const esp_reset_reason_t_ESP_RST_BROWNOUT: esp_reset_reason_t = 9;
 #[doc = "!< Reset over SDIO"]
 pub const esp_reset_reason_t_ESP_RST_SDIO: esp_reset_reason_t = 10;
 #[doc = " @brief Reset reasons"]
-pub type esp_reset_reason_t = ::std::os::raw::c_uint;
+pub type esp_reset_reason_t = ::cty::c_uint;
 #[doc = " Shutdown handler type"]
 pub type shutdown_handler_t = ::core::option::Option<unsafe extern "C" fn()>;
 extern "C" {
@@ -120,7 +120,7 @@ extern "C" {
   #[doc = ""]
   #[doc = " @param buf Pointer to buffer to fill with random numbers."]
   #[doc = " @param len Length of buffer in bytes"]
-  pub fn esp_fill_random(buf: *mut ::core::ffi::c_void, len: usize);
+  pub fn esp_fill_random(buf: *mut ::cty::c_void, len: usize);
 }
 extern "C" {
   #[doc = " @brief  Set base MAC address with the MAC address which is stored in BLK3 of EFUSE or"]
@@ -206,14 +206,14 @@ extern "C" {
   #[doc = " @brief Trigger a software abort"]
   #[doc = ""]
   #[doc = " @param details Details that will be displayed during panic handling."]
-  pub fn esp_system_abort(details: *const ::std::os::raw::c_char);
+  pub fn esp_system_abort(details: *const ::cty::c_char);
 }
 #[doc = "!< ESP32"]
 pub const esp_chip_model_t_CHIP_ESP32: esp_chip_model_t = 1;
 #[doc = "!< ESP32-S2"]
 pub const esp_chip_model_t_CHIP_ESP32S2: esp_chip_model_t = 2;
 #[doc = " @brief Chip models"]
-pub type esp_chip_model_t = ::std::os::raw::c_uint;
+pub type esp_chip_model_t = ::cty::c_uint;
 #[doc = " @brief The structure represents information about the chip"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

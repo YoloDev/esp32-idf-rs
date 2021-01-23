@@ -1,3 +1,5 @@
+#![no_std]
+
 const fn bit(bit_nr: usize) -> usize {
   1 << bit_nr
 }
