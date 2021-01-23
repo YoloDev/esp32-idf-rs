@@ -1,5 +1,7 @@
 [workspace]
 members = [
+  # hal packages
+  "crates/*",
   # -sys packages
   "sys/*",
   # Build tasks
