@@ -1,5 +1,5 @@
 use std::{
-  collections::{HashMap, VecDeque},
+  collections::{HashMap, HashSet, VecDeque},
   env,
   ffi::OsStr,
   fs,
@@ -9,10 +9,11 @@ use std::{
 };
 
 use anyhow::Result;
+use cargo_metadata::{CargoOpt, MetadataCommand};
 use duct::cmd;
-use env::{join_paths, split_paths};
 use io::BufReader;
 use log::{debug, trace};
+use petgraph::{algo::toposort, Graph};
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug, Clone, Copy, Hash, PartialEq, Eq)]
@@ -59,7 +60,7 @@ macro_rules! join_p_str {
   };
 }
 
-fn set_var(name: impl AsRef<OsStr>, value: impl AsRef<OsStr>) {
+pub fn set_var(name: impl AsRef<OsStr>, value: impl AsRef<OsStr>) {
   let name = name.as_ref();
   let value = value.as_ref();
   trace!("{}={}", name.to_str().unwrap(), value.to_str().unwrap());
@@ -121,4 +122,86 @@ pub fn get_idf_env() -> Result<()> {
     .reader()?;
 
   Ok(())
+}
+
+pub struct CrateInfo {
+  name: String,
+  manifest_path: PathBuf,
+}
+
+impl CrateInfo {
+  pub fn name(&self) -> &str {
+    &self.name
+  }
+
+  pub fn manifest(&self) -> &Path {
+    &self.manifest_path
+  }
+
+  // pub fn dir(&self) -> &Path {
+  //   self.manifest_path.parent().unwrap()
+  // }
+}
+
+pub fn get_crates() -> Result<impl Iterator<Item = CrateInfo>> {
+  let metadata = MetadataCommand::new()
+    .no_deps()
+    .features(CargoOpt::AllFeatures)
+    .exec()?;
+
+  let workspace_member_ids = metadata
+    .workspace_members
+    .into_iter()
+    .collect::<HashSet<_>>();
+
+  let packages = metadata
+    .packages
+    .into_iter()
+    .filter(move |p| workspace_member_ids.contains(&p.id))
+    .filter(|p| p.name != "xtask")
+    .collect::<Vec<_>>();
+
+  let name_lookup = packages
+    .iter()
+    .map(|p| (p.name.clone(), p.id.clone()))
+    .collect::<HashMap<_, _>>();
+
+  let deps = packages
+    .iter()
+    .map(|p| {
+      (
+        p.id.clone(),
+        p.dependencies
+          .iter()
+          .filter_map(|d| name_lookup.get(&d.name).cloned())
+          .collect::<Vec<_>>(),
+      )
+    })
+    .collect::<HashMap<_, _>>();
+
+  let mut graph = Graph::new();
+  let pkg_indices = packages
+    .into_iter()
+    .map(|p| (p.id.clone(), graph.add_node(p)))
+    .collect::<HashMap<_, _>>();
+
+  for (pkg_id, deps) in deps {
+    let pkg_index = pkg_indices[&pkg_id];
+    for dep in deps {
+      let dep_index = pkg_indices[&dep];
+      graph.add_edge(pkg_index, dep_index, ());
+    }
+  }
+
+  graph.reverse();
+  let sorting = toposort(&graph, None).unwrap();
+  let packages = sorting.into_iter().map(move |idx| {
+    let p = &graph[idx];
+    CrateInfo {
+      name: p.name.clone(),
+      manifest_path: p.manifest_path.clone(),
+    }
+  });
+
+  Ok(packages)
 }

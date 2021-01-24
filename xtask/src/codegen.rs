@@ -1,5 +1,4 @@
 use anyhow::Result;
-use bindgen::Builder;
 use log::{debug, info};
 use serde::Deserialize;
 use std::{fs, path::Path};

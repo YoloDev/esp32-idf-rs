@@ -5,8 +5,8 @@ use std::env;
 use anyhow::Result;
 use clap::Clap;
 use commands::XTask;
+use log::debug;
 use options::{ColorChoice, Verbosity};
-use termcolor::StandardStream;
 use tracing::metadata::LevelFilter;
 use xtask::{find_workspace, get_idf_env};
 
@@ -59,6 +59,7 @@ fn main() -> Result<()> {
   logging::init(color, filter);
 
   let workspace = find_workspace()?;
+  debug!("cwd = {}", workspace.display());
   env::set_current_dir(&workspace)?;
 
   get_idf_env()?;

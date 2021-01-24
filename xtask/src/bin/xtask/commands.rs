@@ -1,6 +1,7 @@
 use anyhow::Result;
 use clap::Clap;
 
+mod build;
 mod codegen;
 
 pub(crate) trait XTask: Clap {
@@ -11,12 +12,16 @@ pub(crate) trait XTask: Clap {
 pub(crate) enum Command {
   /// Run codegen
   Codegen(codegen::Codegen),
+
+  /// Build libraries against esp32
+  Build(build::Build),
 }
 
 impl XTask for Command {
   fn run(&self) -> Result<()> {
     match self {
       Command::Codegen(x) => x.run(),
+      Command::Build(x) => x.run(),
     }
   }
 }

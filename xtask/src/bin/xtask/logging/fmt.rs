@@ -3,13 +3,12 @@ use std::{
   io::{self, BufRead},
 };
 
-use clap::ErrorKind;
 use termcolor::{Color, ColorChoice, ColorSpec};
-use tracing::{field, span, Event, Level, Subscriber};
+use tracing::{field, Event, Level, Subscriber};
 use tracing_log::NormalizeEvent;
 use tracing_subscriber::{
-  field::{MakeOutput, MakeVisitor, RecordFields, VisitFmt, VisitOutput},
-  fmt::{FmtContext, MakeWriter},
+  field::{MakeOutput, RecordFields, VisitFmt, VisitOutput},
+  fmt::MakeWriter,
   layer,
   registry::LookupSpan,
 };
@@ -226,7 +225,7 @@ impl<'writer> FormatFields<'writer> for Pretty {
     writer: &'writer mut dyn WriteColor,
     fields: R,
   ) -> fmt::Result {
-    let mut v = PrettyVisitor::new(writer, true);
+    let mut v = PrettyVisitor::new(writer);
     fields.record(&mut v);
     v.finish()
   }
@@ -234,15 +233,13 @@ impl<'writer> FormatFields<'writer> for Pretty {
 
 pub struct PrettyVisitor<'a> {
   writer: &'a mut dyn WriteColor,
-  is_empty: bool,
   result: fmt::Result,
 }
 
 impl<'a> PrettyVisitor<'a> {
-  pub fn new(writer: &'a mut dyn WriteColor, is_empty: bool) -> Self {
+  pub fn new(writer: &'a mut dyn WriteColor) -> Self {
     Self {
       writer,
-      is_empty,
       result: Ok(()),
     }
   }
@@ -314,11 +311,11 @@ impl ColorSpecExt for ColorSpec {
 
 impl Pretty {
   const SPACE: &'static str = " ";
-  const NEW_LINE: &'static str = "\n";
-  const ARROW: &'static str = "↳";
-  const DASH: &'static str = "-";
-  const DOT: &'static str = "•";
-  const FW: &'static str = "❯";
+  // const NEW_LINE: &'static str = "\n";
+  // const ARROW: &'static str = "↳";
+  // const DASH: &'static str = "-";
+  // const DOT: &'static str = "•";
+  // const FW: &'static str = "❯";
   const PIPE: &'static str = "│";
 
   const COLORS: &'static [Color] = &[
@@ -457,7 +454,7 @@ where
     let target_color = Pretty::COLORS[target_hash as usize % Pretty::COLORS.len()];
     event_writer.write_color_str(target, &ColorSpec::from_fg(target_color))?;
     event_writer.write_str(Pretty::SPACE)?;
-    let mut v = PrettyVisitor::new(&mut event_writer, true);
+    let mut v = PrettyVisitor::new(&mut event_writer);
     event.record(&mut v);
     v.finish()?;
     writer.reset()?;

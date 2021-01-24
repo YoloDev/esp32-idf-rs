@@ -1,6 +1,5 @@
 use std::marker::PhantomData;
 
-use anyhow::Result;
 use fmt::{FormatEvent, FormatFields};
 use termcolor::{ColorChoice, StandardStream};
 use tracing::{metadata::LevelFilter, Event, Subscriber};
