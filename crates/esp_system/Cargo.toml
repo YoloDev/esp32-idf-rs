@@ -8,4 +8,11 @@ edition = "2018"
 
 [dependencies]
 bitflags = "1"
+cstr_core = { version = "0.2", optional = true, default-features = false }
+esp32-hal = { version = "0.2", optional = true, default-features = false }
+
 esp-idf-system-sys = { path = "../../sys/esp_system" }
+
+[features]
+default = ["alloc"]
+alloc = ["cstr_core/alloc", "esp32-hal/alloc", "esp32-hal/rt"]

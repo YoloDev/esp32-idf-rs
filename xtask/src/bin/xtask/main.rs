@@ -1,9 +1,12 @@
 #![feature(command_access)]
 
-use std::env;
+use std::{
+  env,
+  path::{Path, PathBuf},
+};
 
 use anyhow::Result;
-use clap::Clap;
+use clap::{Clap, ValueHint};
 use commands::XTask;
 use log::debug;
 use options::{ColorChoice, Verbosity};
@@ -49,6 +52,14 @@ struct Options {
 
   #[clap(subcommand)]
   command: commands::Command,
+
+  #[clap(
+    name = "idf-path",
+    long = "idf-path",
+    env = "IDF_PATH",
+    parse(from_os_str),
+    value_hint = ValueHint::FilePath)]
+  idf_path: Option<PathBuf>,
 }
 
 fn main() -> Result<()> {
@@ -62,7 +73,7 @@ fn main() -> Result<()> {
   debug!("cwd = {}", workspace.display());
   env::set_current_dir(&workspace)?;
 
-  get_idf_env()?;
+  get_idf_env(opts.idf_path.as_ref().map(AsRef::<Path>::as_ref))?;
 
   // info!("workspace: {}", workspace.display());
   opts.command.run()

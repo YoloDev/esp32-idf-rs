@@ -67,13 +67,16 @@ pub fn set_var(name: impl AsRef<OsStr>, value: impl AsRef<OsStr>) {
   env::set_var(name, value)
 }
 
-pub fn get_idf_env() -> Result<()> {
-  let idf_path = fs::canonicalize("esp-idf")?;
+pub fn get_idf_env(idf_path: Option<&Path>) -> Result<()> {
+  let idf_path = match idf_path {
+    None => fs::canonicalize("esp-idf")?,
+    Some(p) => p.to_owned(),
+  };
   set_var("IDF_PATH", &idf_path);
 
   let reader = cmd!(
     "python",
-    "esp-idf/tools/idf_tools.py",
+    idf_path.join("tools/idf_tools.py"),
     "export",
     "--format",
     "key-value"
@@ -117,9 +120,12 @@ pub fn get_idf_env() -> Result<()> {
   let path = env::join_paths(path)?;
   set_var("PATH", path);
 
-  cmd!("python", "esp-idf/tools/check_python_dependencies.py")
-    .before_spawn(log_cmd)
-    .reader()?;
+  cmd!(
+    "python",
+    idf_path.join("tools/check_python_dependencies.py")
+  )
+  .before_spawn(log_cmd)
+  .reader()?;
 
   Ok(())
 }
