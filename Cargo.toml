@@ -4,6 +4,8 @@ members = [
   "crates/*",
   # -sys packages
   "sys/*",
+  # examples
+  "examples/*",
   # Build tasks
   "xtask",
 ]
