@@ -8,7 +8,7 @@ edition = "2018"
 
 [dependencies]
 anyhow = "1"
-bindgen = "0.56"
+bindgen = "0.57"
 cargo_metadata = "0.12"
 clap = { version = "3.0.0-beta.2", features = ["wrap_help"] }
 duct = "0.13"
